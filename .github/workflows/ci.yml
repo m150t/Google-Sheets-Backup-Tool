@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+  workflow_dispatch:   # 手動実行でデプロイを叩ける
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+      - name: Install deps
+        run: npm ci || npm i
+      - name: Run ESLint
+        run: npm run lint
+
+  deploy:
+    needs: lint
+    if: github.event_name == 'workflow_dispatch'   # 手動実行のときだけ動く。自動デプロイしたいならこの行を削除
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: Install clasp
+        run: npm i -g @google/clasp
+
+      - name: Restore .clasprc.json from secret
+        run: |
+          echo '${{ secrets.CLASP_RC }}' > ~/.clasprc.json
+          chmod 600 ~/.clasprc.json
+
+      - name: Show target script
+        run: npx clasp open --no-localhost || true
+
+      - name: Push to Apps Script
+        run: npx clasp push --force
