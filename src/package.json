@@ -1,0 +1,14 @@
+{
+  "name": "google-sheets-backup-tool",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "lint": "eslint --ext .js,.gs src",
+    "lint:fix": "eslint --ext .js,.gs src --fix"
+  },
+  "devDependencies": {
+    "eslint": "8.57.0",
+    "eslint-plugin-googleappsscript": "1.0.5"
+  }
+}
