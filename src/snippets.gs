@@ -12,8 +12,20 @@ function jstStamp(fmt = 'yyyyMMdd_HHmmss') {
 
 function withScriptLock(fn, waitMs = 30000) {
   const lock = LockService.getScriptLock();
-  try { lock.waitLock(waitMs); return fn(); }
-  finally { try { lock.releaseLock(); } catch(_) {} }
+  let acquired = false;
+  try {
+    lock.waitLock(waitMs);
+    acquired = true;
+  } catch (_) {
+    throw userError('別のバックアップが進行中です。しばらく待ってから再実行してください。');
+  }
+  try {
+    return fn();
+  } finally {
+    if (acquired) {
+      try { lock.releaseLock(); } catch(_) {}
+    }
+  }
 }
 
 function userError(message) { const e = new Error(message); e.isUser = true; return e; }
