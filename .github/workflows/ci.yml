@@ -25,4 +25,4 @@ jobs:
           fi
 
       - name: Run ESLint
-        run: npm run lint
+        run: eslint --ext .js,.gs .
