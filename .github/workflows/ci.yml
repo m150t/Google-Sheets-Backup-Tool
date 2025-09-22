@@ -16,13 +16,8 @@ jobs:
         with:
           node-version: "18"
 
-      - name: Install deps
-        run: |
-          if [ -f package-lock.json ]; then
-            npm ci
-          else
-            npm i
-          fi
+      - name: Install dependencies
+        run: npm install   # ← これ大事！
 
       - name: Run ESLint
-        run: eslint --ext .js,.gs .
+        run: npx eslint --ext .js,.gs .
