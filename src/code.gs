@@ -36,8 +36,8 @@ function installDailyTrigger_() {
 }
 
 function runBackupNow() {
-  withScriptLock(() => {
-    try {
+  try {
+    withScriptLock(() => {
       const folderId = getProp('BACKUP_FOLDER_ID', { required: true });
       const folder = getFolderByIdSafe_(folderId);
 
@@ -54,10 +54,10 @@ function runBackupNow() {
       const pdfFile = folder.createFile(pdfBlob);
 
       info(`バックアップ完了！\nコピー: ${copied.getUrl()}\nPDF: ${pdfFile.getUrl()}`);
-    } catch (err) {
-      fail(err, 'バックアップでエラーが発生しました：\n');
-    }
-  });
+    });
+  } catch (err) {
+    fail(err, 'バックアップでエラーが発生しました：\n');
+  }
 }
 
 function openPropertiesHelp_() {
